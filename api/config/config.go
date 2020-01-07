@@ -8,6 +8,8 @@ import (
 )
 
 func (c *Main) Parse() {
+	c.DB = GetDB()
+
 	err := env.Parse(c)
 	if err != nil {
 		logger.Get().WithError(err).Fatal("Could not parse Config")
