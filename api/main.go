@@ -7,10 +7,10 @@ import (
 )
 
 func main() {
-	config := &config.Main{}
-	config.Parse()
+	cfg := &config.Main{}
+	cfg.Parse()
 
-	httpAPI := api.New(config.SelfPort)
+	httpAPI := api.New(cfg.SelfPort)
 	_ = router.New(httpAPI.Mux)
 
 	httpAPI.RegisterRoutes()

@@ -1,3 +1,4 @@
 #! /usr/bin/env sh
 
 export APP_PORT=8080
+export APP_LOG_LEVEL=debug

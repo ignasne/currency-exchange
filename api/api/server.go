@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ignasne/currency-exchange/api/logger"
 	"net/http"
 	"os"
 
@@ -36,7 +37,7 @@ func (a *Api) Listen() {
 	err := http.ListenAndServe(fmt.Sprintf(":%d", a.HTTPPort), handler)
 
 	if err != nil {
-		fmt.Println("Could not initialize HTTP server")
+		logger.Get().WithError(err).Fatal("Could not initialize HTTP server")
 
 		os.Exit(1)
 	}
@@ -47,7 +48,7 @@ func Ok(res http.ResponseWriter, data interface{}) {
 	err := json.NewEncoder(res).Encode(data)
 
 	if err != nil {
-		fmt.Println("Could not encode json data")
+		logger.Get().WithError(err).Fatal("Could not encode json data")
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
