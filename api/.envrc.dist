@@ -8,3 +8,5 @@ export DB_PORT=3306
 export DB_USERNAME=database_user
 export DB_PASSWORD=database_pssw
 export DB_DATABASE=database_name
+
+export APP_MIGRATIONS_PATH=migrations

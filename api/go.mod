@@ -7,6 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gorilla/mux v1.7.3
 	github.com/rs/cors v1.7.0
+	github.com/rubenv/sql-migrate v0.0.0-20191213152630-06338513c237
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 )

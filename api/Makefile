@@ -7,4 +7,7 @@ vendor:
 run-dev:
 	go run "${CURRENT_DIR}/main.go" server
 
+migrate:
+	go run "${CURRENT_DIR}/main.go" migrate
+
 .PHONY: vendor
