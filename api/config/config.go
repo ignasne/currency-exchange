@@ -9,6 +9,7 @@ import (
 
 func (c *Main) Parse() {
 	c.DB = GetDB()
+	c.Currencies = GetCurrencies()
 
 	err := env.Parse(c)
 	if err != nil {

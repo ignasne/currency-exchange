@@ -27,7 +27,9 @@ func runHttpServer() {
 	_ = datasource.Connect(cfg.DB)
 
 	httpAPI := api.New(cfg.SelfPort)
-	_ = router.New(httpAPI.Mux)
+	router := router.New(httpAPI.Mux)
+
+	router.RegisterQuoteRoutes(cfg.Currencies)
 
 	httpAPI.RegisterRoutes()
 	httpAPI.Listen()
