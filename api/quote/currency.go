@@ -1,18 +1,16 @@
 package quote
 
 import (
-	"errors"
-	"math"
-	"time"
+	"github.com/shopspring/decimal"
 )
 
 type apiClientI interface {
-	GetRateForCurrencies(fromCurrency string, toCurrency string) (float64, error)
+	GetRateForCurrencies(fromCurrency string, toCurrency string) (decimal.Decimal, error)
 }
 
 type cacheClientI interface {
-	Get(key string) string
-	Set(key string, value string, ttl time.Time) bool
+	Get(key string) *string
+	Set(key string, value int, ttl int) bool
 }
 
 // Currency service
@@ -22,25 +20,20 @@ type Currency struct {
 }
 
 func (c *Currency) GetRate(fromCurrency string, toCurrency string) (*Rate, error) {
-	rate, err := c.apiClient.GetRateForCurrencies(fromCurrency, toCurrency)
+	rateDecimal, err := c.apiClient.GetRateForCurrencies(fromCurrency, toCurrency)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if rate == -1 {
-		return nil, errors.New("currency to convert not found in api response")
-	}
-
 	// round rate
-	rateNumber := math.Round(rate*1000) / 1000 // round it to nearest
+	rateNumber, _ := rateDecimal.Round(3).Float64() // round it to nearest
 
-	result := &Rate{value: rate, roundedValue: rateNumber}
+	result := &Rate{value: rateDecimal, roundedValue: rateNumber}
 
 	return result, nil
 }
 
 func GetCurrencyService(apiClient apiClientI, cacheClient cacheClientI) *Currency {
-	currencyService := &Currency{apiClient: apiClient, cacheClient: cacheClient}
-	return currencyService
+	return &Currency{apiClient: apiClient, cacheClient: cacheClient}
 }

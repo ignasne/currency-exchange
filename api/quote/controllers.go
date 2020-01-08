@@ -1,17 +1,13 @@
 package quote
 
+import "github.com/shopspring/decimal"
+
 type quotesFinderI interface {
 	GetRate(fromCurrency string, toCurrency string) (*Rate, error)
 }
 
-//type cacheServiceI interface {
-//	Get(key string)
-//	Set(key string, value string, ttl civil.DateTime)
-//}
-
 type Controller struct {
 	Rates quotesFinderI
-	//CacheService cacheServiceI
 }
 
 func (c *Controller) Get(fromCurrencyCode string, toCurrencyCode string, amount int64) (*ResponseGet, error) {
@@ -22,13 +18,15 @@ func (c *Controller) Get(fromCurrencyCode string, toCurrencyCode string, amount 
 		return nil, err
 	}
 
+	amountDecimal := decimal.NewFromInt(amount)
+
 	// convert value to cents
-	rateResult := int64(rate.value * float64(amount))
+	rateResult, _ := rate.value.Mul(amountDecimal).Float64()
 
 	response := &ResponseGet{
 		ExchangeRate: rate.roundedValue,
 		CurrencyCode: toCurrencyCode,
-		Amount: rateResult,
+		Amount: int64(rateResult),
 	}
 
 	return response, nil

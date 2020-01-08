@@ -1,5 +1,7 @@
 package quote
 
+import "github.com/shopspring/decimal"
+
 type RequestGetStruct struct {
 	FromCurrencyCode string `schema:"from_currency_code,required"`
 	ToCurrencyCode   string `schema:"to_currency_code,required"`
@@ -13,7 +15,7 @@ type ResponseGet struct {
 }
 
 type Rate struct {
-	value float64
+	value decimal.Decimal
 	roundedValue float64
 }
 

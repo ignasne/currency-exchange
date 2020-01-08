@@ -3,6 +3,8 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/shopspring/decimal"
 	"net/http"
 	"net/url"
 )
@@ -25,14 +27,15 @@ func NewOpenRatesAPIClient(apiURL string) (*OpenRatesAPIClient, error) {
 	}, nil
 }
 
-func (c *OpenRatesAPIClient) GetRateForCurrencies(fromCurrency string, toCurrency string) (float64, error) {
+func (c *OpenRatesAPIClient) GetRateForCurrencies(fromCurrency string, toCurrency string) (decimal.Decimal, error) {
 	rel := &url.URL{Path: "/latest"}
 	u := c.BaseURL.ResolveReference(rel)
+	var currencyRate decimal.Decimal
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 
 	if err != nil {
-		return -1, errors.New("fail create request to open rates api")
+		return currencyRate, errors.New("fail create request to open rates api")
 	}
 
 	q := url.Values{}
@@ -42,7 +45,7 @@ func (c *OpenRatesAPIClient) GetRateForCurrencies(fromCurrency string, toCurrenc
 	res, err := c.Client.Do(req)
 
 	if err != nil {
-		return -1, err
+		return currencyRate, err
 	}
 
 	defer res.Body.Close()
@@ -51,20 +54,31 @@ func (c *OpenRatesAPIClient) GetRateForCurrencies(fromCurrency string, toCurrenc
 
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
-		return -1, err
+		return currencyRate, err
 	}
 
 	if len(result) == 0 {
-		return -1, errors.New("empty result section in open rates fetch")
+		return currencyRate, errors.New("empty result section in open rates fetch")
 	}
 
 	ratesList := result["rates"].(map[string]interface{})
+	currencyRateText := ""
 
 	for key, value := range ratesList {
 		if key == toCurrency {
-			return value.(float64), nil
+			currencyRateText = fmt.Sprintf("%v", value)
 		}
 	}
 
-	return -1, nil
+	if len(currencyRateText) == 0 {
+		return currencyRate, errors.New(fmt.Sprintf("rate %s not found for %s currency", toCurrency, fromCurrency))
+	}
+
+	currencyRate, err = decimal.NewFromString(currencyRateText)
+
+	if err != nil {
+		return currencyRate, errors.New(fmt.Sprintf("could not convert currency %s rate", toCurrency))
+	}
+
+	return currencyRate, nil
 }
