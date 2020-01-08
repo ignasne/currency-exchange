@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"github.com/ignasne/currency-exchange/api/api"
+	"github.com/ignasne/currency-exchange/api/client"
 	"github.com/ignasne/currency-exchange/api/config"
 	"github.com/ignasne/currency-exchange/api/datasource"
+	"github.com/ignasne/currency-exchange/api/logger"
+	"github.com/ignasne/currency-exchange/api/quote"
 	"github.com/ignasne/currency-exchange/api/router"
 	"github.com/spf13/cobra"
 )
@@ -24,12 +27,20 @@ func runHttpServer() {
 	cfg := &config.Main{}
 	cfg.Parse()
 
-	_ = datasource.Connect(cfg.DB)
+	db := datasource.Connect(cfg.DB)
 
 	httpAPI := api.New(cfg.SelfPort)
-	router := router.New(httpAPI.Mux)
+	r := router.New(httpAPI.Mux)
 
-	router.RegisterQuoteRoutes(cfg.Currencies)
+	openRatesApiClient, err := client.NewOpenRatesAPIClient(cfg.RatesAPIURL)
+
+	if err != nil {
+		logger.Get().WithError(err).Fatal("failed to initialize open rates api client")
+	}
+
+	ratesService := quote.GetCurrencyService(openRatesApiClient, &datasource.CacheDB{DB: db})
+
+	r.RegisterQuoteRoutes(cfg.Currencies, ratesService)
 
 	httpAPI.RegisterRoutes()
 	httpAPI.Listen()

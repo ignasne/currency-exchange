@@ -18,3 +18,8 @@ func BadRequest(r http.ResponseWriter, err error) {
 func Ok(r http.ResponseWriter, v interface{}) {
 	resp.NewResponse(r).Ok(&ResourceResponse{Data: v})
 }
+
+// ServerError writes 501 status code with error message
+func ServerError(r http.ResponseWriter, err error) {
+	resp.NewResponse(r).InternalServerError(&ResourceResponse{Error: err.Error()})
+}

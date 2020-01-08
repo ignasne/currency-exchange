@@ -14,6 +14,21 @@ type ConnectionPool struct {
 	*sql.DB
 }
 
+type Reader interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+}
+
+type Writer interface {
+	Exec(query string, args ...interface{}) (sql.Result, error)
+}
+
+type ReaderWriter interface {
+	Reader
+	Writer
+	Begin() (*sql.Tx, error)
+}
+
 func Connect(cfg *config.DB) *ConnectionPool {
 	db, err := sql.Open(
 		"mysql",

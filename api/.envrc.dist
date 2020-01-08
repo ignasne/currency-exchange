@@ -10,3 +10,5 @@ export DB_PASSWORD=database_pssw
 export DB_DATABASE=database_name
 
 export APP_MIGRATIONS_PATH=migrations
+
+export RATES_API_URL=https://api.exchangeratesapi.io

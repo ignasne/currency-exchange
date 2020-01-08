@@ -12,36 +12,56 @@ import (
 	"strings"
 )
 
+type RateServiceI interface {
+	GetRate(fromCurrency string, toCurrency string) (*quote.Rate, error)
+}
 
-type quoteRouter struct {}
+type quoteRouter struct {
+	RatesService RateServiceI
+}
 
-func (r *Router) RegisterQuoteRoutes(currencies quote.Currencies) {
-	router := &quoteRouter{}
+func (r *Router) RegisterQuoteRoutes(currencies quote.Currencies, service RateServiceI ) {
+	router := &quoteRouter{
+		RatesService: service,
+	}
 
 	mr := r.Router.PathPrefix("/api").Subrouter()
 
 	mr.HandleFunc("/quote", router.getHandler(currencies)).Methods("GET")
 }
 
-func (r *quoteRouter) getHandler(currencies quote.Currencies) http.HandlerFunc {
+func (qr *quoteRouter) getHandler(currencies quote.Currencies) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
-		requestValues, err := getQuoteRequestValues(req.URL.Query())
+		r, err := getQuoteRequestValues(req.URL.Query())
 		if err != nil {
 			BadRequest(res, err)
 			return
 		}
 
-		_, err = validateRequest(requestValues, currencies)
+		_, err = validateRequest(r, currencies)
 		if err != nil {
 			BadRequest(res, err)
 			return
 		}
+
+		locationController := &quote.Controller{
+			Rates: qr.RatesService,
+		}
+
+		response, err := locationController.Get(r.FromCurrencyCode, r.ToCurrencyCode, r.Amount)
+
+		if err != nil {
+			ServerError(res, err)
+			return
+		}
+
+		Ok(res, response)
 	}
 }
 
 func validateRequest(requestData *quote.RequestGetStruct, currencies quote.Currencies) (bool, error) {
 	if !currencies.Validate(requestData.FromCurrencyCode) || !currencies.Validate(requestData.ToCurrencyCode) {
-		// It not recommended to reveal available values in api response as they should be seen in api
+		// It's not recommended to reveal available values in api response as they should be seen in api
 		// documentation.
 		// But at this time let's show them
 		return false, errors.New(fmt.Sprintf("Bad currency value. Available currencies: %s", strings.Join(currencies, ", ")))
