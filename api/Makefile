@@ -13,4 +13,17 @@ migrate:
 test:
 	go test -v -race ./router
 
+build:
+	docker build \
+		-f .docker/Dockerfile \
+		--force-rm \
+		-t quotes-api \
+		.
+
+start:
+	docker-compose up -d --force-recreate
+
+stop:
+	docker-compose down
+
 .PHONY: vendor

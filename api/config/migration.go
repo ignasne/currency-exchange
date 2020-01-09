@@ -8,7 +8,6 @@ import (
 )
 
 type Migration struct {
-	// @migrate dockerfile
 	Path string `env:"APP_MIGRATIONS_PATH" envDefault:"migrations"`
 }
 

@@ -1,0 +1,40 @@
+---
+
+version: '2.1'
+
+services:
+  api:
+    image: quotes-api
+    mem_limit: 256m
+    restart: on-failure
+    ports:
+      - 8080:8080
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RATES_API_URL: "https://api.exchangeratesapi.io"
+      APP_PORT: 8080
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: exchange
+      DB_PASSWORD: exchange
+      DB_DATABASE: quotes-api
+
+  db:
+    image: mysql:5.6
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: quotes-api
+      MYSQL_USER: exchange
+      MYSQL_PASSWORD: exchange
+    healthcheck:
+      test: "/usr/bin/mysql --user=exchange --password=exchange --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
