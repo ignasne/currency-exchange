@@ -1,6 +1,7 @@
 package quote
 
 import (
+	"fmt"
 	"github.com/shopspring/decimal"
 )
 
@@ -10,7 +11,7 @@ type apiClientI interface {
 
 type cacheClientI interface {
 	Get(key string) *string
-	Set(key string, value int, ttl int) bool
+	Set(key string, value string, ttl int) bool
 }
 
 // Currency service
@@ -20,18 +21,47 @@ type Currency struct {
 }
 
 func (c *Currency) GetRate(fromCurrency string, toCurrency string) (*Rate, error) {
-	rateDecimal, err := c.apiClient.GetRateForCurrencies(fromCurrency, toCurrency)
+	cacheKey := fmt.Sprintf("%s%s", fromCurrency, toCurrency)
+	var rateDecimal decimal.Decimal
+	var err error
+
+	// firstly check cache for currency pair
+	ratioFromCache := c.cacheClient.Get(cacheKey)
+
+	if ratioFromCache != nil {
+		rateDecimal, err = decimal.NewFromString(*ratioFromCache)
+
+		if err != nil {
+			return nil, err
+		}
+
+		result := c.getResult(rateDecimal)
+
+		return result, nil
+	}
+
+	rateDecimal, err = c.apiClient.GetRateForCurrencies(fromCurrency, toCurrency)
 
 	if err != nil {
 		return nil, err
 	}
 
+	// ttl could be take from config
+	// save currency rate to cache
+	c.cacheClient.Set(cacheKey, rateDecimal.String(), 10)
+
+	result := c.getResult(rateDecimal)
+
+	return result, nil
+}
+
+func (c *Currency) getResult(rateDecimal decimal.Decimal) *Rate {
 	// round rate
-	rateNumber, _ := rateDecimal.Round(3).Float64() // round it to nearest
+	rateNumber, _ := rateDecimal.Round(3).Float64()
 
 	result := &Rate{value: rateDecimal, roundedValue: rateNumber}
 
-	return result, nil
+	return result
 }
 
 func GetCurrencyService(apiClient apiClientI, cacheClient cacheClientI) *Currency {
