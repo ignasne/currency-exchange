@@ -59,7 +59,7 @@ func (c *Currency) getResult(rateDecimal decimal.Decimal) *Rate {
 	// round rate
 	rateNumber, _ := rateDecimal.Round(3).Float64()
 
-	result := &Rate{value: rateDecimal, roundedValue: rateNumber}
+	result := &Rate{Value: rateDecimal, RoundedValue: rateNumber}
 
 	return result
 }

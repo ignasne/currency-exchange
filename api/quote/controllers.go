@@ -20,11 +20,11 @@ func (c *Controller) Get(fromCurrencyCode string, toCurrencyCode string, amount 
 
 	amountDecimal := decimal.NewFromInt(amount)
 
-	// convert value to cents
-	rateResult, _ := rate.value.Mul(amountDecimal).Float64()
+	// convert Value to cents
+	rateResult, _ := rate.Value.Mul(amountDecimal).Float64()
 
 	response := &ResponseGet{
-		ExchangeRate: rate.roundedValue,
+		ExchangeRate: rate.RoundedValue,
 		CurrencyCode: toCurrencyCode,
 		Amount: int64(rateResult),
 	}

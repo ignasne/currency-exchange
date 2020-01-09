@@ -15,8 +15,8 @@ type ResponseGet struct {
 }
 
 type Rate struct {
-	value decimal.Decimal
-	roundedValue float64
+	Value        decimal.Decimal
+	RoundedValue float64
 }
 
 type Currencies []string

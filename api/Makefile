@@ -10,4 +10,7 @@ run-dev:
 migrate:
 	go run "${CURRENT_DIR}/main.go" migrate
 
+test:
+	go test -v -race ./router
+
 .PHONY: vendor
