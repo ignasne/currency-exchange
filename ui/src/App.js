@@ -1,23 +1,24 @@
-import React from 'react';
+import React from 'react'
+import { Provider } from 'react-redux'
 
-function App() {
+import getStore from './store'
+import CurrencySection from './components/CurrencySection'
+import ResultSection from './components/ResultSection'
+
+const store = getStore()
+
+function App () {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Provider store={store}>
+      <div className="container">
+        <header>
+          <h1>Currency Exchange</h1>
+        </header>
+        <CurrencySection/>
+        <ResultSection/>
+      </div>
+    </Provider>
+  )
 }
 
-export default App;
+export default App
