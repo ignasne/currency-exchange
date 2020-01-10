@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { validationError, ratesWidgetUpdate, getRates } from '../actions/rates'
 import styled from 'styled-components'
 
-const CURRENCIES = window.env.Currencies
+const CURRENCIES = window.env.currencies
 
 const StyledCurrencyContainer = styled.div`
   width: 100%;
