@@ -21,8 +21,17 @@ type Currency struct {
 }
 
 func (c *Currency) GetRate(fromCurrency string, toCurrency string) (*Rate, error) {
-	cacheKey := fmt.Sprintf("%s%s", fromCurrency, toCurrency)
 	var rateDecimal decimal.Decimal
+
+	// avoid any check if currencies are equal
+	if fromCurrency == toCurrency {
+		rateDecimal = decimal.NewFromInt(1)
+
+		result := c.getResult(rateDecimal)
+		return result, nil
+	}
+
+	cacheKey := fmt.Sprintf("%s%s", fromCurrency, toCurrency)
 	var err error
 
 	// firstly check cache for currency pair

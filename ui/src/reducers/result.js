@@ -10,7 +10,8 @@ export default function (state = initialState, action) {
     return {
       ...state,
       exchangeRate: action.data['exchange_rate'],
-      amount: action.data['amount']
+      amount: action.data['amount'],
+      currencyTo: action.data['currency_code']
     }
   }
 

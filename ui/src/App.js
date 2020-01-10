@@ -1,23 +1,25 @@
 import React from 'react'
-import { Provider } from 'react-redux'
 
-import getStore from './store'
-import CurrencySection from './components/CurrencySection'
-import ResultSection from './components/ResultSection'
+import Currency from './components/Currency'
+import Result from './components/Result'
+import Header from './components/Header'
+import styled from 'styled-components'
 
-const store = getStore()
+const StyledApp = styled.div`
+  margin: 0 auto;
+  max-width: 600px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 11px 0px rgba(0, 0, 0, 0.2);
+`
 
 function App () {
   return (
-    <Provider store={store}>
-      <div className="container">
-        <header>
-          <h1>Currency Exchange</h1>
-        </header>
-        <CurrencySection/>
-        <ResultSection/>
-      </div>
-    </Provider>
+    <StyledApp>
+      <Header/>
+      <Currency/>
+      <Result/>
+    </StyledApp>
   )
 }
 
