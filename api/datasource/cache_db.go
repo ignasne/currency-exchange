@@ -11,13 +11,20 @@ type CacheDB struct {
 }
 
 func (c *CacheDB) Get(key string) *string {
-	c.clearExpired()
+	var err error
+
+	err = c.clearExpired()
+
+	if err != nil {
+		logger.Get().WithError(err).Warn("failed to clear currency cache")
+		return nil
+	}
 
 	var value *string
 
 	queryString := `SELECT v FROM currency_cache WHERE k = ? AND (ttl IS NULL OR ttl > ?)`
 
-	err := c.DB.QueryRow(queryString, key, Timestamp()).Scan(&value)
+	err = c.DB.QueryRow(queryString, key, Timestamp()).Scan(&value)
 
 	if err != nil && err != sql.ErrNoRows {
 		// silently log error and return empty value that cache could be ignore and real data can be used in api
@@ -29,7 +36,9 @@ func (c *CacheDB) Get(key string) *string {
 }
 
 func (c *CacheDB) Set(key string, value string, ttl int) bool {
-	err := c.clearExpired()
+	var err error
+
+	err = c.clearExpired()
 
 	if err != nil {
 		logger.Get().WithError(err).Warn("failed to clear currency cache")

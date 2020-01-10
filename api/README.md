@@ -15,7 +15,7 @@ Using [Makefile](https://en.wikipedia.org/wiki/Makefile)
 
 ### For development
 Use [direnv](https://direnv.net/) for development variables set. 
-Copy ```.envrc.dist``` to ```.envrc```
+Copy file ```.envrc.dist``` to ```.envrc``` and change values.
 
 1. Add env variables:
     ```bash
@@ -46,7 +46,7 @@ Locate api docker container while executing:
 ```bash
 docker ps
 ```
-Search for `quotes-api` image and copy `CONTAINER ID`
+Search for `quotes-api` container and copy `CONTAINER ID`
 
 Login to docker container:
 ```bash
@@ -63,9 +63,9 @@ Successful result should output message similar to this one:
 {"level":"info","msg":"migrations applied","time":"2020-01-08T23:50:56Z","total_migrations":2}
 ```
 
+Api will be available at ```http://localhost:8080``` (the same port as for development environment)
+
 For stopping Docker containers:
 ```bash
 make stop
 ```
-
-Api will be available at ```http://localhost:8080``` (the same port as for development environment)

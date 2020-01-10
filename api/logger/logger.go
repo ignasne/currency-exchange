@@ -21,9 +21,9 @@ func init() {
 			os.Exit(1)
 		}
 		logrus.SetLevel(logLevel)
-
-		standardLogger = logrus.StandardLogger().WithFields(logrus.Fields{})
 	}
+
+	standardLogger = logrus.StandardLogger().WithFields(logrus.Fields{})
 }
 
 func Get() *logrus.Entry {
