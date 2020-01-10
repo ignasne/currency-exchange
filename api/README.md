@@ -1,4 +1,4 @@
-## Back-end api
+## Back-end API
 
 Api written using Go programming language. How to setup Go environment
 [https://golang.org/doc/install](https://golang.org/doc/install) 
@@ -7,6 +7,8 @@ Api converts given currency amount to needed currency by fetching these
 two currencies exchange ratio from third party api.
 
 Api uses database for cache purpose, please not forget to run database migrations.
+
+Available Swagger documentation [swagger.yaml](.doc/swagger.yaml)
  
 ### Running API
 Using [Makefile](https://en.wikipedia.org/wiki/Makefile)
