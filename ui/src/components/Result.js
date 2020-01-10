@@ -38,7 +38,7 @@ function Result (props) {
 Result.propTypes = {
   exchangeRate: PropTypes.number.isRequired,
   amount: PropTypes.number.isRequired,
-  currencyTo: PropTypes.string
+  currencyTo: PropTypes.string.isRequired
 }
 
 const stateToProps = function (state) {

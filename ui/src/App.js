@@ -3,6 +3,8 @@ import React from 'react'
 import Currency from './components/Currency'
 import Result from './components/Result'
 import Header from './components/Header'
+import Error from './components/Error'
+import LadingIndicator from './components/LoadingIndicator'
 import styled from 'styled-components'
 
 const StyledApp = styled.div`
@@ -18,6 +20,8 @@ function App () {
     <StyledApp>
       <Header/>
       <Currency/>
+      <LadingIndicator/>
+      <Error/>
       <Result/>
     </StyledApp>
   )
