@@ -1,0 +1,69 @@
+swagger: "2.0"
+info:
+  description: "Simple JSON API which converts given currency and it's value in cents to needed currency using third party api which gets currencies exchange ratio."
+  version: "1.0.0"
+  title: "Currency Exchange API"
+host: "localhost:8080"
+basePath: "/api"
+tags:
+  - name: "api"
+    description: "Get currency exhange ratio and amount"
+schemes:
+  - "http"
+paths:
+  /quote:
+    get:
+      tags:
+        - "api"
+      summary: "Currency exchange ratio and amount"
+      description: "Get currency exchange ratio by provided from currency and to currency and amount which should be converted to needed currency."
+      operationId: "quotesGet"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: "from_currency_code"
+          type: "string"
+          description: "Currency from which conversion should be made. Currency code from 3 letters. Available: ILS, EUR, USD"
+          required: true
+        - in: "query"
+          name: "to_currency_code"
+          type: "string"
+          description: "Currency to which conversion should be made.Currency code from 3 letters. Available: ILS, EUR, USD"
+          required: true
+        - in: "query"
+          name: "amount"
+          type: "integer"
+          format: "int64"
+          description: "Currency amount in cents which should be converted to needed currency"
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/Response'
+        400:
+          description: "Bad request parameters"
+        500:
+          description: "Could not get exchange ratio."
+definitions:
+  Response:
+    type: "object"
+    properties:
+      data:
+        $ref: "#/definitions/ResponseResult"
+    xml:
+      name: "Response"
+  ResponseResult:
+    type: "object"
+    properties:
+      exchange_rate:
+        type: "number"
+        format: "double"
+      currency_code:
+        type: "string"
+      amount:
+        type: "integer"
+        format: "int64"
+    xml:
+      name: "ResponseResult"
