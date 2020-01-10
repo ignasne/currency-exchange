@@ -5,6 +5,22 @@ const API_URL = window.env.api.url.replace(/\/$/, '')
 export const RATES_SET = 'RATES_SET'
 export const RATES_GET_FAIL = 'RATES_GET_FAIL'
 export const RATES_FETCHING = 'RATES_FETCHING'
+export const RATES_VALIDATION_ERROR = 'RATES_VALIDATION_ERROR'
+export const RATES_WIDGET_UPDATE = 'RATES_WIDGET_UPDATE'
+
+export const ratesWidgetUpdate = () => dispatch => {
+  dispatch({
+    type: RATES_WIDGET_UPDATE,
+    data: ''
+  })
+}
+
+export const validationError = (message) => dispatch => {
+  dispatch({
+    type: RATES_VALIDATION_ERROR,
+    data: message
+  })
+}
 
 export const getRates = (fromCurrency, toCurrency, amount) => dispatch => {
   // TODO manage fetching state and truncate lasting request to api if new one was initiated

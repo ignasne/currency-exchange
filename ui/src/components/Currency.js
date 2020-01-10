@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { getRates } from '../actions/rates'
+import { validationError, ratesWidgetUpdate, getRates } from '../actions/rates'
 import styled from 'styled-components'
 
 const CURRENCIES = window.env.Currencies
@@ -18,6 +18,7 @@ const StyledInputContainer = styled.div`
   margin: 0 auto 12px auto;
   overflow: hidden;
   padding: 5px 8px;
+  background: #fafafa no-repeat 90% 50%;
 `
 
 const StyledDropdown = styled.select`
@@ -63,22 +64,43 @@ class Currency extends React.Component {
   exchange = () => {
     const {fromCurrency, toCurrency, amount} = this.state
 
-    if (amount <= 0) {
-      console.log('@error amount less equal then zero')
+    this.props.ratesWidgetUpdate()
+
+    // let's assume that our exchange converter accepts only two digits precision
+    let regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    let amountFormatValid = regex.test(amount)
+
+    if (
+      amount > 0 &&
+      amountFormatValid &&
+      fromCurrency !== toCurrency &&
+      this.currencies.includes(fromCurrency) &&
+      this.currencies.includes(toCurrency)
+    ) {
+      // amount should be given in cents
+      let amountInCents = amount * 100
+      this.props.getRates(fromCurrency, toCurrency, amountInCents)
+      return
+    }
+
+    if (amount !== '' && amount <= 0) {
+      this.props.validationError('Amount should be greater then zero.')
+      return
+    }
+
+    if (amount > 0 && !amountFormatValid) {
+      this.props.validationError('Please use two decimal parts in currency amount.')
       return
     }
 
     if (fromCurrency === toCurrency) {
-      console.log('@error please select different currencies')
+      this.props.validationError('Please select not equal currencies')
       return
     }
 
-    if (!this.currencies.includes(fromCurrency) || !this.currencies.includes(toCurrency)) {
-      console.log('@error Currency is not available')
-      return
+    if (!this.currencies.includes(fromCurrency) && !this.currencies.includes(toCurrency)) {
+      this.props.validationError('Your provided currency is not supported.')
     }
-
-    this.props.getRates(fromCurrency, toCurrency, amount)
   }
 
   onChange (e) {
@@ -128,12 +150,14 @@ class Currency extends React.Component {
 
 Currency.propTypes = {
   getRates: PropTypes.func.isRequired,
+  ratesWidgetUpdate: PropTypes.func.isRequired,
+  validationError: PropTypes.func.isRequired,
 }
 
 const stateToProps = function () {
   return {}
 }
 
-export default connect(stateToProps, {getRates: getRates})(
+export default connect(stateToProps, {ratesWidgetUpdate, validationError, getRates})(
   Currency
 )

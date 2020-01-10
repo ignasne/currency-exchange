@@ -18,11 +18,13 @@ const StyledResultTitle = styled.div`
 
 function Result (props) {
   if (props.exchangeRate > 0) {
+    // amount was retrieved in cents, lets update
+    let amountFloat = props.amount / 100
     return (
       <StyledResultContainer>
         <StyledResult>
           <StyledResultTitle>Total amount</StyledResultTitle>
-          {props.amount} {props.currencyTo}
+          {amountFloat} {props.currencyTo}
         </StyledResult>
         <StyledResult>
           <StyledResultTitle>Currency rate</StyledResultTitle>
