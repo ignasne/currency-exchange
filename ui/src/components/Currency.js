@@ -11,6 +11,16 @@ const StyledCurrencyContainer = styled.div`
   width: 100%;
 `
 
+const StyledSelectContainer = styled.div`
+  border: 1px solid #ccc;
+  width: 120px;
+  border-radius: 3px;
+  margin: 0 auto 12px auto;
+  overflow: hidden;
+  padding: 5px 8px;
+  background: #fafafa url("data:image/png;base64,R0lGODlhDwAUAIABAAAAAP///yH5BAEAAAEALAAAAAAPABQAAAIXjI+py+0Po5wH2HsXzmw//lHiSJZmUAAAOw==") no-repeat 90% 50%;
+`
+
 const StyledInputContainer = styled.div`
   border: 1px solid #ccc;
   width: 120px;
@@ -18,7 +28,7 @@ const StyledInputContainer = styled.div`
   margin: 0 auto 12px auto;
   overflow: hidden;
   padding: 5px 8px;
-  background: #fafafa no-repeat 90% 50%;
+  background: #fafafa;
 `
 
 const StyledDropdown = styled.select`
@@ -78,7 +88,7 @@ class Currency extends React.Component {
       this.currencies.includes(toCurrency)
     ) {
       // amount should be given in cents
-      let amountInCents = amount * 100
+      let amountInCents = Math.round(amount * 100)
       this.props.getRates(fromCurrency, toCurrency, amountInCents)
       return
     }
@@ -114,7 +124,7 @@ class Currency extends React.Component {
 
     return (
       <StyledCurrencyContainer>
-        <StyledInputContainer>
+        <StyledSelectContainer>
           <StyledDropdown
             name="fromCurrency"
             value={this.state.fromCurrency}
@@ -123,8 +133,8 @@ class Currency extends React.Component {
             <option value="">from currency</option>
             {currencyOptions}
           </StyledDropdown>
-        </StyledInputContainer>
-        <StyledInputContainer>
+        </StyledSelectContainer>
+        <StyledSelectContainer>
           <StyledDropdown
             name="toCurrency"
             value={this.state.toCurrency}
@@ -133,7 +143,7 @@ class Currency extends React.Component {
             <option value="">to currency</option>
             {currencyOptions}
           </StyledDropdown>
-        </StyledInputContainer>
+        </StyledSelectContainer>
         <StyledInputContainer>
           <StyledInput
             name="amount"
